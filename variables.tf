@@ -26,3 +26,24 @@ variable "preferred_azs" {
   description = "List of preferred availability zones"
   default     = ["us-east-1a", "us-east-1b"]
 }
+
+
+###-----------dynamodb tables-----------###
+variable "dynamodb_tables" {
+  type = map(object({
+    name-suffix = string
+    hash_key    = string
+    range_key   = string
+    attributes = list(object({
+      name = string
+      type = string
+    }))
+    global_secondary_indexes = list(object({
+      name            = string
+      hash_key        = string
+      range_key       = string
+      projection_type = string
+    }))
+  }))
+  description = "Map of DynamoDB tables with their name suffixes"
+}
