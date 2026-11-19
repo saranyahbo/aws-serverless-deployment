@@ -16,6 +16,13 @@ lambda_functions = {
     memory_size = 128
     description = "Lambda function for backend processing"
   }
+  sns_notification_function = {
+    handler     = "sns_notification_function.lambda_handler"
+    runtime     = "python3.13"
+    timeout     = 30
+    memory_size = 128
+    description = "Lambda function for SNS notifications"
+  }
 }
 
 ###-----------dynamodb tables-----------###
@@ -39,3 +46,18 @@ dynamodb_tables = {
   }
 }
 
+###-----------s3 buckets-----------###
+s3_buckets = {
+  "frontend" = {
+    s3_bucket_name = "clops-s3-frontend"
+  }
+  "assets" = {
+    s3_bucket_name = "clops-s3-assets"
+  }
+  "access-logs" = {
+    s3_bucket_name = "clops-s3-access-logs"
+  }
+  "cloudfront" = {
+    s3_bucket_name = "clops-s3-cloudfront"
+  }
+}

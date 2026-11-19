@@ -38,12 +38,15 @@ variable "dynamodb_tables" {
       name = string
       type = string
     }))
-    global_secondary_indexes = list(object({
-      name            = string
-      hash_key        = string
-      range_key       = string
-      projection_type = string
-    }))
   }))
   description = "Map of DynamoDB tables with their name suffixes"
+}
+
+
+####-----------s3 buckets-----------###
+variable "s3_buckets" {
+  type = map(object({
+    s3_bucket_name = string
+  }))
+  description = "Map of S3 buckets with their names"
 }
