@@ -138,7 +138,7 @@ resource "aws_iam_role_policy" "sns_lambda_policy" {
           "sns:ListSubscriptionsByTopic"
         ]
         resource = "*"
-      }    
+      }
     ]
   })
 }
