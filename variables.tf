@@ -11,7 +11,7 @@ variable "authorizer_lambda_arn" {
 }
 
 variable "lambda_functions" {
-  type = map(objects({
+  type = map(object({
     function_name = string
     handler       = string
     runtime       = string

@@ -1,5 +1,5 @@
 ### API Gateway alarms
-resource "aws_cloudwatch_metric_alarms" "5xx_erros" {
+resource "aws_cloudwatch_metric_alarm" "5xx_erros" {
   for_each            = var.lambda_functions
   alarm_name          = "${var.application_name}-${each.key}-5xx-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -15,7 +15,7 @@ resource "aws_cloudwatch_metric_alarms" "5xx_erros" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarms" "4xx_errors" {
+resource "aws_cloudwatch_metric_alarm" "4xx_errors" {
   for_each            = var.lambda_functions
   alarm_name          = "${var.application_name}-${each.key}-4xx-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -31,7 +31,7 @@ resource "aws_cloudwatch_metric_alarms" "4xx_errors" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarms" "latency" {
+resource "aws_cloudwatch_metric_alarm" "latency" {
   for_each            = var.lambda_functions
   alarm_name          = "${var.application_name}-${each.key}-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -47,7 +47,7 @@ resource "aws_cloudwatch_metric_alarms" "latency" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarms" "request_count" {
+resource "aws_cloudwatch_metric_alarm" "request_count" {
   for_each            = var.lambda_functions
   alarm_name          = "${var.application_name}-${each.key}-request-count"
   comparison_operator = "LessThanOrEqualToThreshold"
