@@ -24,9 +24,25 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform init and plan
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+
+    - name: Test Lambda handlers
       run: |
+        python -m pip install -r tests/requirements.txt
+        python -m unittest discover -s tests -v
+
+    - name: Terraform init and plan
+      env:
+        TF_VAR_okta_issuer: ${{ secrets.OKTA_ISSUER }}
+        TF_VAR_okta_audience: ${{ secrets.OKTA_AUDIENCE || 'api://default' }}
+        TF_VAR_okta_client_id: ${{ secrets.OKTA_CLIENT_ID }}
+        TF_VAR_okta_client_secret: ${{ secrets.OKTA_CLIENT_SECRET }}
+      run: |
+            mkdir -p .build
             terraform init 
             terraform validate
-            terraform plan
+            terraform plan -var-file=env-config/us-east-1/var.tfvars
             # terraform apply -auto-approve

@@ -7,14 +7,14 @@ resource "aws_iam_role" "apigw_auth_role" {
   name = "${var.application_name}-apigw-authorizer-role"
 
   assume_role_policy = jsonencode({
-    version = "2012-10-17"
-    statement = [
+    Version = "2012-10-17"
+    Statement = [
       {
-        effect = "Allow"
-        principal = {
-          service = "apigateway.amazonaws.com"
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
         }
-        action = "sts:AssumeRole"
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -24,14 +24,14 @@ resource "aws_iam_role_policy" "apigw_auth_policy" {
   name = "${var.application_name}-apigw-authorizer-policy"
   role = aws_iam_role.apigw_auth_role.id
   policy = jsonencode({
-    version = "2012-10-17"
-    statement = [
+    Version = "2012-10-17"
+    Statement = [
       {
-        effect = "Allow"
-        action = [
+        Effect = "Allow"
+        Action = [
           "lambda:InvokeFunction"
         ]
-        resource = var.authorizer_lambda_arn
+        Resource = aws_lambda_function.lambda_function["okta_auth"].arn
       }
     ]
   })
@@ -45,14 +45,14 @@ resource "aws_iam_role" "lambda_role" {
   for_each = var.lambda_functions
   name     = "${var.application_name}-${each.key}-lambda-role"
   assume_role_policy = jsonencode({
-    version = "2012-10-17"
-    statement = [
+    Version = "2012-10-17"
+    Statement = [
       {
-        effect = "Allow"
-        principal = {
-          service = "lambda.amazonaws.com"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
         }
-        action = "sts:AssumeRole"
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -68,10 +68,17 @@ resource "aws_iam_role_policy" "lambda_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
-  for_each   = var.lambda_functions
-  role       = aws_iam_role.lambda_role[each.key].name
-  policy_arn = aws_iam_role_policy.lambda_policy[each.key].arn
+resource "aws_iam_role_policy" "backend_dynamodb" {
+  name = "${var.application_name}-backend-dynamodb"
+  role = aws_iam_role.lambda_role["backend_function"].id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["dynamodb:GetItem", "dynamodb:Scan", "dynamodb:PutItem"]
+      Resource = [for table in aws_dynamodb_table.dynamodb-table : table.arn]
+    }]
+  })
 }
 
 ###---------------------Cloudfront---------------------###
@@ -113,14 +120,14 @@ resource "aws_iam_role" "sns_lambda_role" {
   name = "${var.application_name}-sns-lambda-role"
 
   assume_role_policy = jsonencode({
-    version = "2012-10-17"
-    statement = [
+    Version = "2012-10-17"
+    Statement = [
       {
-        effect = "Allow"
-        principal = {
-          service = "lambda.amazonaws.com"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
         }
-        action = "sts:AssumeRole"
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -130,17 +137,17 @@ resource "aws_iam_role_policy" "sns_lambda_policy" {
   name = "${var.application_name}-sns-lambda-policy"
   role = aws_iam_role.sns_lambda_role.id
   policy = jsonencode({
-    version = "2012-10-17"
-    statement = [
+    Version = "2012-10-17"
+    Statement = [
       {
-        effect = "Allow"
-        action = [
+        Effect = "Allow"
+        Action = [
           "sns:Publish",
           "sns:Subscribe",
           "sns:Receive",
           "sns:ListSubscriptionsByTopic"
         ]
-        resource = "*"
+        Resource = "*"
       }
     ]
   })
@@ -152,7 +159,5 @@ resource "aws_lambda_permission" "sns_lambda_permission" {
   function_name = aws_lambda_function.lambda_function["sns_notification_function"].function_name
   principal     = "sns.amazonaws.com"
 
-  # The /* part allows invocation from any stage, method and resource path
-  # within API Gateway.
   source_arn = aws_sns_topic.user_updates.arn
 }

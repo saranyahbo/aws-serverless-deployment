@@ -4,12 +4,6 @@ variable "application_name" {
   description = "The name of the application"
 }
 
-variable "authorizer_lambda_arn" {
-  type        = string
-  default     = ""
-  description = "The URI of the Okta authorizer Lambda function"
-}
-
 variable "lambda_functions" {
   type = map(object({
     handler     = string
@@ -17,8 +11,33 @@ variable "lambda_functions" {
     timeout     = number
     memory_size = number
     description = string
-    filename    = string
+    environment = optional(map(string), {})
   }))
+}
+
+variable "okta_issuer" {
+  type        = string
+  default     = ""
+  description = "Okta custom authorization server issuer, e.g. https://example.okta.com/oauth2/default"
+}
+
+variable "okta_audience" {
+  type        = string
+  default     = "api://default"
+  description = "Expected access token audience"
+}
+
+variable "okta_client_id" {
+  type        = string
+  default     = ""
+  description = "Confidential client registered for Okta token introspection"
+}
+
+variable "okta_client_secret" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "Okta introspection client secret, supplied via TF_VAR_okta_client_secret"
 }
 
 variable "preferred_azs" {

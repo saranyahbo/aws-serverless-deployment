@@ -12,7 +12,13 @@ resource "aws_api_gateway_rest_api" "main" {
 resource "aws_api_gateway_deployment" "main" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.main.body))
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_integration.gateway_integration,
+      aws_api_gateway_integration_response.integration_response,
+      aws_api_gateway_integration.backend,
+      aws_api_gateway_method.backend,
+      aws_api_gateway_authorizer.main,
+    ]))
   }
 
   lifecycle {
@@ -56,10 +62,11 @@ resource "aws_api_gateway_integration" "gateway_integration" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   resource_id = aws_api_gateway_resource.api_subtree.id
   http_method = aws_api_gateway_method.method.http_method
-  type        = "AWS_PROXY"
-
-  integration_http_method = "POST"
-  timeout_milliseconds    = 29000
+  type        = "MOCK"
+  request_templates = {
+    "application/json" = jsonencode({ statusCode = 200 })
+  }
+  timeout_milliseconds = 29000
 }
 
 resource "aws_api_gateway_method_response" "method_response" {
@@ -79,6 +86,38 @@ resource "aws_api_gateway_integration_response" "integration_response" {
   resource_id = aws_api_gateway_resource.api_subtree.id
   http_method = aws_api_gateway_method.method.http_method
   status_code = aws_api_gateway_method_response.method_response.status_code
+  depends_on  = [aws_api_gateway_integration.gateway_integration]
+}
+
+resource "aws_api_gateway_resource" "backend_proxy" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.api_subtree.id
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "backend" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.backend_proxy.id
+  http_method   = "ANY"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.main.id
+}
+
+resource "aws_api_gateway_integration" "backend" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.backend_proxy.id
+  http_method             = aws_api_gateway_method.backend.http_method
+  type                    = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.lambda_function["backend_function"].invoke_arn
+}
+
+resource "aws_lambda_permission" "backend_api" {
+  statement_id  = "AllowBackendAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_function["backend_function"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*/clops/*"
 }
 
 #--------------------------------------------------------
@@ -88,7 +127,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
 resource "aws_lambda_permission" "lambda_permission" {
   statement_id  = "AllowclopsAPIInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = var.authorizer_lambda_arn
+  function_name = aws_lambda_function.lambda_function["okta_auth"].function_name
   principal     = "apigateway.amazonaws.com"
 
   # The /* part allows invocation from any stage, method and resource path
@@ -99,9 +138,11 @@ resource "aws_lambda_permission" "lambda_permission" {
 resource "aws_api_gateway_authorizer" "main" {
   name                             = "okta_authorizer"
   rest_api_id                      = aws_api_gateway_rest_api.main.id
-  authorizer_uri                   = var.authorizer_lambda_arn
+  authorizer_uri                   = aws_lambda_function.lambda_function["okta_auth"].invoke_arn
   authorizer_credentials           = aws_iam_role.apigw_auth_role.arn
   type                             = "TOKEN"
   identity_source                  = "method.request.header.Authorization"
-  authorizer_result_ttl_in_seconds = 300
+  authorizer_result_ttl_in_seconds = 0
+
+  depends_on = [aws_iam_role_policy.apigw_auth_policy]
 }
