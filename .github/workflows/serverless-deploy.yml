@@ -44,5 +44,5 @@ jobs:
             mkdir -p .build
             terraform init 
             terraform validate
-            terraform plan -var-file=env-config/us-east-1/var.tfvars
+            terraform plan
             # terraform apply -auto-approve

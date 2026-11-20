@@ -1,13 +1,7 @@
 
 locals {
   s3_origin_id = "myS3Origin"
-  my_domain    = " "
-}
-
-data "aws_acm_certificate" "my_domain" {
-  region   = "us-east-1"
-  domain   = "*.${local.my_domain}"
-  statuses = ["ISSUED"]
+  my_domain    = "auto8mate.com"
 }
 
 resource "aws_cloudfront_origin_access_control" "default" {
@@ -109,25 +103,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = data.aws_acm_certificate.my_domain.arn
+    acm_certificate_arn = aws_acm_certificate_validation.my_domain.certificate_arn
     ssl_support_method  = "sni-only"
-  }
-}
-
-# Create Route53 records for the CloudFront distribution aliases
-data "aws_route53_zone" "my_domain" {
-  name = local.my_domain
-}
-
-resource "aws_route53_record" "cloudfront" {
-  for_each = aws_cloudfront_distribution.s3_distribution.aliases
-  zone_id  = data.aws_route53_zone.my_domain.zone_id
-  name     = each.value
-  type     = "A"
-
-  alias {
-    name                   = aws_cloudfront_distribution.s3_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
-    evaluate_target_health = false
   }
 }

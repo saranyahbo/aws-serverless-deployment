@@ -1,6 +1,6 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
   for_each     = var.dynamodb_tables
-  name         = "${var.application_name}-${each.value.name-suffix}"
+  name         = "${var.application_name}-${each.value["name-suffix"]}"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = each.value.hash_key
   range_key    = each.value.range_key
