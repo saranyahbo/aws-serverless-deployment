@@ -8,8 +8,8 @@
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/*",
-                    "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/*:*"]
+      "Resource": ["arn:aws:logs:${region}:${account_id}:log-group:/aws/lambda/*",
+                    "arn:aws:logs:${region}:${account_id}:log-group:/aws/lambda/*:*"]
     },
     {
       "Effect": "Allow",

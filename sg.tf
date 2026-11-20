@@ -1,7 +1,7 @@
 resource "aws_security_group" "lambda_sg" {
   for_each    = var.lambda_functions
-  name        = "${each.value.function_name}-sg"
-  description = "Security group for ${each.value.function_name} Lambda function"
+  name        = "${var.application_name}-${each.key}-sg"
+  description = "Security group for ${var.application_name}-${each.key} Lambda function"
   vpc_id      = data.aws_vpc.eks_vpc.id
 
   egress {

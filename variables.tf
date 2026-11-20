@@ -12,12 +12,12 @@ variable "authorizer_lambda_arn" {
 
 variable "lambda_functions" {
   type = map(object({
-    function_name = string
-    handler       = string
-    runtime       = string
-    timeout       = number
-    memory_size   = number
-    description   = string
+    handler     = string
+    runtime     = string
+    timeout     = number
+    memory_size = number
+    description = string
+    filename    = string
   }))
 }
 

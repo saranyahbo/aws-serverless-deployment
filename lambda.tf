@@ -7,6 +7,7 @@ resource "aws_lambda_function" "lambda_function" {
   memory_size   = each.value.memory_size
   description   = each.value.description
   role          = aws_iam_role.lambda_role[each.key].arn
+  filename      = each.value.filename
 
   ephemeral_storage {
     size = 512

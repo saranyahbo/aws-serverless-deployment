@@ -9,7 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_5xx_errors" {
   period              = 300
   statistic           = "Sum"
   threshold           = 3
-  alarm_description   = "Alarm when API Gateway returns 5XX errors for ${each.value.function_name}"
+  alarm_description   = "Alarm when API Gateway returns 5XX errors for ${var.application_name}-${each.key}"
   dimensions = {
     ApiName = each.value.function_name
   }
@@ -25,7 +25,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_4xx_errors" {
   period              = 300
   statistic           = "Sum"
   threshold           = 3
-  alarm_description   = "Alarm when API Gateway returns 4XX errors for ${each.value.function_name}"
+  alarm_description   = "Alarm when API Gateway returns 4XX errors for ${var.application_name}-${each.key}"
   dimensions = {
     ApiName = each.value.function_name
   }
@@ -41,7 +41,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_latency" {
   period              = 300
   statistic           = "Average"
   threshold           = 1000
-  alarm_description   = "Alarm when API Gateway latency exceeds 1000ms for ${each.value.function_name}"
+  alarm_description   = "Alarm when API Gateway latency exceeds 1000ms for ${var.application_name}-${each.key}"
   dimensions = {
     ApiName = each.value.function_name
   }
@@ -57,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_request_count" {
   period              = 300
   statistic           = "Sum"
   threshold           = 1
-  alarm_description   = "Alarm when API Gateway request count is less than or equal to 1 for ${each.value.function_name}"
+  alarm_description   = "Alarm when API Gateway request count is less than or equal to 1 for ${var.application_name}-${each.key}"
   dimensions = {
     ApiName = each.value.function_name
   }
@@ -296,7 +296,7 @@ resource "aws_cloudwatch_metric_alarm" "s3_4xx_errors" {
   alarm_actions       = [aws_sns_topic.user_updates.arn]
   ok_actions          = [aws_sns_topic.user_updates.arn]
   dimensions = {
-    BucketName = each.value.s3_bucket_name
+    BucketName = aws_s3_bucket.main["frontend"].bucket
     FilterId   = "EntireBucket"
   }
 }
@@ -314,7 +314,7 @@ resource "aws_cloudwatch_metric_alarm" "s3_5xx_errors" {
   alarm_actions       = [aws_sns_topic.user_updates.arn]
   ok_actions          = [aws_sns_topic.user_updates.arn]
   dimensions = {
-    BucketName = each.value.s3_bucket_name
+    BucketName = aws_s3_bucket.main["frontend"].bucket
     FilterId   = "EntireBucket"
   }
 }

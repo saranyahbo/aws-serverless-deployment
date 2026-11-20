@@ -62,7 +62,10 @@ resource "aws_iam_role_policy" "lambda_policy" {
   for_each = var.lambda_functions
   name     = "${each.value.function_name}-lambda-policy"
   role     = aws_iam_role.lambda_role[each.key].id
-  policy   = templatefile("$path.module}/templates/lambda_role.tmpl")
+  policy = templatefile("${path.module}/templates/lambda_role.tmpl", {
+    account_id = data.aws_caller_identity.current.account_id
+    region     = data.aws_region.current.name
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
@@ -89,7 +92,7 @@ data "aws_iam_policy_document" "origin_bucket_policy" {
     ]
 
     resources = [
-      "${aws_s3_bucket.clops-s3-cloudfront.arn}/*",
+      "${aws_s3_bucket.main["cloudfront"].arn}/*",
     ]
 
     condition {
@@ -141,11 +144,6 @@ resource "aws_iam_role_policy" "sns_lambda_policy" {
       }
     ]
   })
-}
-
-resource "aws_iam_role_policy_attachment" "sns_lambda_policy_attachment" {
-  role       = aws_iam_role.sns_lambda_role.name
-  policy_arn = aws_iam_role_policy.sns_lambda_policy.arn
 }
 
 resource "aws_lambda_permission" "sns_lambda_permission" {
