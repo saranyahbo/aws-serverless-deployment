@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "apigw_auth_policy" {
 
 resource "aws_iam_role" "lambda_role" {
   for_each = var.lambda_functions
-  name     = "${each.value.function_name}-lambda-role"
+  name     = "${var.application_name}-${each.key}-lambda-role"
   assume_role_policy = jsonencode({
     version = "2012-10-17"
     statement = [
@@ -60,11 +60,11 @@ resource "aws_iam_role" "lambda_role" {
 
 resource "aws_iam_role_policy" "lambda_policy" {
   for_each = var.lambda_functions
-  name     = "${each.value.function_name}-lambda-policy"
+  name     = "${var.application_name}-${each.key}-lambda-policy"
   role     = aws_iam_role.lambda_role[each.key].id
   policy = templatefile("${path.module}/templates/lambda_role.tmpl", {
     account_id = data.aws_caller_identity.current.account_id
-    region     = data.aws_region.current.name
+    region     = data.aws_region.current.region
   })
 }
 
@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "origin_bucket_policy" {
 }
 
 resource "aws_s3_bucket_policy" "cloudfront" {
-  bucket = aws_s3_bucket.clops-s3-cloudfront.bucket
+  bucket = aws_s3_bucket.main["cloudfront"].bucket
   policy = data.aws_iam_policy_document.origin_bucket_policy.json
 }
 

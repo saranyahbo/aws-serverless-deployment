@@ -11,7 +11,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_5xx_errors" {
   threshold           = 3
   alarm_description   = "Alarm when API Gateway returns 5XX errors for ${var.application_name}-${each.key}"
   dimensions = {
-    ApiName = each.value.function_name
+    ApiName = aws_api_gateway_rest_api.main.name
   }
 }
 
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_4xx_errors" {
   threshold           = 3
   alarm_description   = "Alarm when API Gateway returns 4XX errors for ${var.application_name}-${each.key}"
   dimensions = {
-    ApiName = each.value.function_name
+    ApiName = aws_api_gateway_rest_api.main.name
   }
 }
 
@@ -43,7 +43,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_latency" {
   threshold           = 1000
   alarm_description   = "Alarm when API Gateway latency exceeds 1000ms for ${var.application_name}-${each.key}"
   dimensions = {
-    ApiName = each.value.function_name
+    ApiName = aws_api_gateway_rest_api.main.name
   }
 }
 
@@ -59,7 +59,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_request_count" {
   threshold           = 1
   alarm_description   = "Alarm when API Gateway request count is less than or equal to 1 for ${var.application_name}-${each.key}"
   dimensions = {
-    ApiName = each.value.function_name
+    ApiName = aws_api_gateway_rest_api.main.name
   }
 }
 
