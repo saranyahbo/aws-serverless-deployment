@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "main" {
   for_each = var.s3_buckets
-  bucket   = "${var.application_name}-${each.value.s3_bucket_name}"
+  bucket   = each.value.s3_bucket_name
 
 }
 
