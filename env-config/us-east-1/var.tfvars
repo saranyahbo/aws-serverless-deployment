@@ -30,7 +30,6 @@ dynamodb_tables = {
   "products" = {
     name-suffix = "ddb-products"
     hash_key    = "productId"
-    range_key   = ""
     attributes = [
       { name = "productId", type = "S" }
     ]
@@ -39,7 +38,6 @@ dynamodb_tables = {
   "orders" = {
     name-suffix = "ddb-orders"
     hash_key    = "orderId"
-    range_key   = ""
     attributes = [
       { name = "orderId", type = "S" }
     ]

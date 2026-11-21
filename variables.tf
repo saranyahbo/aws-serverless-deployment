@@ -52,7 +52,7 @@ variable "dynamodb_tables" {
   type = map(object({
     name-suffix = string
     hash_key    = string
-    range_key   = string
+    range_key   = optional(string)
     attributes = list(object({
       name = string
       type = string
