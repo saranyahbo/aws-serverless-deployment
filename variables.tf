@@ -46,6 +46,12 @@ variable "preferred_azs" {
   default     = ["us-east-1a", "us-east-1b"]
 }
 
+variable "domain_name" {
+  type        = string
+  description = "Existing domain name managed in Cloudflare and used for the ShopHub site"
+  default     = "auto8mate.com"
+}
+
 
 ###-----------dynamodb tables-----------###
 variable "dynamodb_tables" {

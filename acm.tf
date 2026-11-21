@@ -1,6 +1,6 @@
 resource "aws_acm_certificate" "my_domain" {
-  domain_name               = local.my_domain
-  subject_alternative_names = ["*.${local.my_domain}"]
+  domain_name               = var.domain_name
+  subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -8,11 +8,11 @@ resource "aws_acm_certificate" "my_domain" {
   }
 }
 
-# Add ACM's validation CNAME records in Cloudflare before validation can finish.
-# Use DNS only, with CNAME flattening disabled for these records.
 resource "aws_acm_certificate_validation" "my_domain" {
   certificate_arn = aws_acm_certificate.my_domain.arn
-  validation_record_fqdns = distinct([
+  # DNS remains managed in Cloudflare. Add the records from the
+  # acm_dns_validation_records output there before the apply reaches this step.
+  validation_record_fqdns = [
     for option in aws_acm_certificate.my_domain.domain_validation_options : option.resource_record_name
-  ])
+  ]
 }

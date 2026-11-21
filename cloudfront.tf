@@ -1,7 +1,6 @@
 
 locals {
   s3_origin_id = "myS3Origin"
-  my_domain    = "auto8mate.com"
 }
 
 resource "aws_cloudfront_origin_access_control" "default" {
@@ -23,7 +22,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   comment             = "Some comment"
   default_root_object = "index.html"
 
-  aliases = ["mysite.${local.my_domain}", "yoursite.${local.my_domain}"]
+  aliases = [var.domain_name, "www.${var.domain_name}"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
