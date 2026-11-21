@@ -45,5 +45,5 @@ jobs:
             terraform init -input=false
             terraform validate
             terraform plan -input=false -var-file=env-config/us-east-1/var.tfvars
-            terraform apply -target=aws_acm_certificate.my_domain -var-file=env-config/us-east-1/var.tfvars
+            terraform apply -target=aws_acm_certificate.my_domain -var-file=env-config/us-east-1/var.tfvars -auto-approve
             #terraform apply -auto-approve
