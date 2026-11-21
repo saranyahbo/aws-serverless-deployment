@@ -47,18 +47,18 @@ variable "preferred_azs" {
 }
 
 
-# ###-----------dynamodb tables-----------###
-# variable "dynamodb_tables" {
-#   type = map(object({
-#     name-suffix = string
-#     hash_key    = string
-#     range_key   = optional(string)
-#     attributes = list(object({
-#       name = string
-#       type = string
-#     }))
-#   }))
-# }
+###-----------dynamodb tables-----------###
+variable "dynamodb_tables" {
+  type = map(object({
+    name-suffix = string
+    hash_key    = string
+    range_key   = optional(string)
+    attributes = list(object({
+      name = string
+      type = string
+    }))
+  }))
+}
 
 
 ####-----------s3 buckets-----------###
