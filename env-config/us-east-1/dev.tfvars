@@ -26,23 +26,23 @@ lambda_functions = {
 }
 
 ###-----------dynamodb tables-----------###
-dynamodb_tables = {
-  "products" = {
-    name-suffix = "ddb-products"
-    hash_key    = "productId"
-    attributes = [
-      { name = "productId", type = "S" }
-    ]
-  }
+# dynamodb_tables = {
+#   "products" = {
+#     name-suffix = "ddb-products"
+#     hash_key    = "productId"
+#     attributes = [
+#       { name = "productId", type = "S" }
+#     ]
+#   }
 
-  "orders" = {
-    name-suffix = "ddb-orders"
-    hash_key    = "orderId"
-    attributes = [
-      { name = "orderId", type = "S" }
-    ]
-  }
-}
+#   "orders" = {
+#     name-suffix = "ddb-orders"
+#     hash_key    = "orderId"
+#     attributes = [
+#       { name = "orderId", type = "S" }
+#     ]
+#   }
+# }
 
 ###-----------s3 buckets-----------###
 s3_buckets = {

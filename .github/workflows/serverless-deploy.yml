@@ -46,4 +46,4 @@ jobs:
             terraform validate
             # terraform plan -input=false -var-file=env-config/us-east-1/var.tfvars
             terraform plan
-            terraform apply -auto-approve
+            #terraform apply -auto-approve

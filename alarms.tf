@@ -137,77 +137,77 @@ resource "aws_cloudwatch_metric_alarm" "lambda_concurrent_executions" {
 }
 
 ### DynamoDB alarms
-resource "aws_cloudwatch_metric_alarm" "dynamodb_user_errors" {
-  for_each            = var.dynamodb_tables
-  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-user-errors"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
-  metric_name         = "UserErrors"
-  namespace           = "AWS/DynamoDB"
-  period              = 300
-  statistic           = "Sum"
-  threshold           = 1
-  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB user errors"
-  alarm_actions       = [aws_sns_topic.user_updates.arn]
-  ok_actions          = [aws_sns_topic.user_updates.arn]
-  dimensions = {
-    TableName = "${var.application_name}-${each.value["name-suffix"]}"
-  }
-}
+# resource "aws_cloudwatch_metric_alarm" "dynamodb_user_errors" {
+#   for_each            = var.dynamodb_tables
+#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-user-errors"
+#   comparison_operator = "GreaterThanOrEqualToThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "UserErrors"
+#   namespace           = "AWS/DynamoDB"
+#   period              = 300
+#   statistic           = "Sum"
+#   threshold           = 1
+#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB user errors"
+#   alarm_actions       = [aws_sns_topic.user_updates.arn]
+#   ok_actions          = [aws_sns_topic.user_updates.arn]
+#   dimensions = {
+#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
+#   }
+# }
 
-resource "aws_cloudwatch_metric_alarm" "dynamodb_system_errors" {
-  for_each            = var.dynamodb_tables
-  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-system-errors"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
-  metric_name         = "SystemErrors"
-  namespace           = "AWS/DynamoDB"
-  period              = 300
-  statistic           = "Sum"
-  threshold           = 1
-  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB system errors"
-  alarm_actions       = [aws_sns_topic.user_updates.arn]
-  ok_actions          = [aws_sns_topic.user_updates.arn]
-  dimensions = {
-    TableName = "${var.application_name}-${each.value["name-suffix"]}"
-  }
-}
+# resource "aws_cloudwatch_metric_alarm" "dynamodb_system_errors" {
+#   for_each            = var.dynamodb_tables
+#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-system-errors"
+#   comparison_operator = "GreaterThanOrEqualToThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "SystemErrors"
+#   namespace           = "AWS/DynamoDB"
+#   period              = 300
+#   statistic           = "Sum"
+#   threshold           = 1
+#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB system errors"
+#   alarm_actions       = [aws_sns_topic.user_updates.arn]
+#   ok_actions          = [aws_sns_topic.user_updates.arn]
+#   dimensions = {
+#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
+#   }
+# }
 
-resource "aws_cloudwatch_metric_alarm" "dynamodb_throttled_requests" {
-  for_each            = var.dynamodb_tables
-  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-throttled-requests"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
-  metric_name         = "ThrottledRequests"
-  namespace           = "AWS/DynamoDB"
-  period              = 300
-  statistic           = "Sum"
-  threshold           = 1
-  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has throttled requests"
-  alarm_actions       = [aws_sns_topic.user_updates.arn]
-  ok_actions          = [aws_sns_topic.user_updates.arn]
-  dimensions = {
-    TableName = "${var.application_name}-${each.value["name-suffix"]}"
-  }
-}
+# resource "aws_cloudwatch_metric_alarm" "dynamodb_throttled_requests" {
+#   for_each            = var.dynamodb_tables
+#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-throttled-requests"
+#   comparison_operator = "GreaterThanOrEqualToThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "ThrottledRequests"
+#   namespace           = "AWS/DynamoDB"
+#   period              = 300
+#   statistic           = "Sum"
+#   threshold           = 1
+#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has throttled requests"
+#   alarm_actions       = [aws_sns_topic.user_updates.arn]
+#   ok_actions          = [aws_sns_topic.user_updates.arn]
+#   dimensions = {
+#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
+#   }
+# }
 
-resource "aws_cloudwatch_metric_alarm" "dynamodb_consumed_read_capacity" {
-  for_each            = var.dynamodb_tables
-  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-consumed-read-capacity"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "ConsumedReadCapacityUnits"
-  namespace           = "AWS/DynamoDB"
-  period              = 300
-  statistic           = "Sum"
-  threshold           = 10000
-  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} consumed read capacity units exceed 10000 in 5 minutes"
-  alarm_actions       = [aws_sns_topic.user_updates.arn]
-  ok_actions          = [aws_sns_topic.user_updates.arn]
-  dimensions = {
-    TableName = "${var.application_name}-${each.value["name-suffix"]}"
-  }
-}
+# resource "aws_cloudwatch_metric_alarm" "dynamodb_consumed_read_capacity" {
+#   for_each            = var.dynamodb_tables
+#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-consumed-read-capacity"
+#   comparison_operator = "GreaterThanThreshold"
+#   evaluation_periods  = 1
+#   metric_name         = "ConsumedReadCapacityUnits"
+#   namespace           = "AWS/DynamoDB"
+#   period              = 300
+#   statistic           = "Sum"
+#   threshold           = 10000
+#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} consumed read capacity units exceed 10000 in 5 minutes"
+#   alarm_actions       = [aws_sns_topic.user_updates.arn]
+#   ok_actions          = [aws_sns_topic.user_updates.arn]
+#   dimensions = {
+#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
+#   }
+# }
 
 ### CloudFront alarms
 resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
