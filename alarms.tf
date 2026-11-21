@@ -4,6 +4,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_5xx_errors" {
   alarm_name          = "${var.application_name}-${each.key}-5xx-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "5XXError"
   namespace           = "AWS/ApiGateway"
   period              = 300
@@ -20,6 +21,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_4xx_errors" {
   alarm_name          = "${var.application_name}-${each.key}-4xx-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "4XXError"
   namespace           = "AWS/ApiGateway"
   period              = 300
@@ -36,6 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_latency" {
   alarm_name          = "${var.application_name}-${each.key}-latency"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "Latency"
   namespace           = "AWS/ApiGateway"
   period              = 300
@@ -52,6 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "apigw_request_count" {
   alarm_name          = "${var.application_name}-${each.key}-request-count"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "Count"
   namespace           = "AWS/ApiGateway"
   period              = 300
@@ -69,6 +73,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   alarm_name          = "${var.application_name}-${each.key}-lambda-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "Errors"
   namespace           = "AWS/Lambda"
   period              = 300
@@ -87,6 +92,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
   alarm_name          = "${var.application_name}-${each.key}-lambda-throttles"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "Throttles"
   namespace           = "AWS/Lambda"
   period              = 300
@@ -105,6 +111,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_duration" {
   alarm_name          = "${var.application_name}-${each.key}-lambda-duration-p95"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "Duration"
   namespace           = "AWS/Lambda"
   period              = 300
@@ -123,6 +130,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_concurrent_executions" {
   alarm_name          = "${var.application_name}-${each.key}-lambda-concurrent-executions"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "ConcurrentExecutions"
   namespace           = "AWS/Lambda"
   period              = 300
@@ -137,83 +145,84 @@ resource "aws_cloudwatch_metric_alarm" "lambda_concurrent_executions" {
 }
 
 ### DynamoDB alarms
-# resource "aws_cloudwatch_metric_alarm" "dynamodb_user_errors" {
-#   for_each            = var.dynamodb_tables
-#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-user-errors"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "UserErrors"
-#   namespace           = "AWS/DynamoDB"
-#   period              = 300
-#   statistic           = "Sum"
-#   threshold           = 1
-#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB user errors"
-#   alarm_actions       = [aws_sns_topic.user_updates.arn]
-#   ok_actions          = [aws_sns_topic.user_updates.arn]
-#   dimensions = {
-#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "dynamodb_user_errors" {
+  for_each            = var.dynamodb_tables
+  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-user-errors"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "UserErrors"
+  namespace           = "AWS/DynamoDB"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB user errors"
+  alarm_actions       = [aws_sns_topic.user_updates.arn]
+  ok_actions          = [aws_sns_topic.user_updates.arn]
+  dimensions = {
+    TableName = "${var.application_name}-${each.value["name-suffix"]}"
+  }
+}
 
-# resource "aws_cloudwatch_metric_alarm" "dynamodb_system_errors" {
-#   for_each            = var.dynamodb_tables
-#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-system-errors"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "SystemErrors"
-#   namespace           = "AWS/DynamoDB"
-#   period              = 300
-#   statistic           = "Sum"
-#   threshold           = 1
-#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB system errors"
-#   alarm_actions       = [aws_sns_topic.user_updates.arn]
-#   ok_actions          = [aws_sns_topic.user_updates.arn]
-#   dimensions = {
-#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "dynamodb_system_errors" {
+  for_each            = var.dynamodb_tables
+  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-system-errors"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "SystemErrors"
+  namespace           = "AWS/DynamoDB"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has DynamoDB system errors"
+  alarm_actions       = [aws_sns_topic.user_updates.arn]
+  ok_actions          = [aws_sns_topic.user_updates.arn]
+  dimensions = {
+    TableName = "${var.application_name}-${each.value["name-suffix"]}"
+  }
+}
 
-# resource "aws_cloudwatch_metric_alarm" "dynamodb_throttled_requests" {
-#   for_each            = var.dynamodb_tables
-#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-throttled-requests"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "ThrottledRequests"
-#   namespace           = "AWS/DynamoDB"
-#   period              = 300
-#   statistic           = "Sum"
-#   threshold           = 1
-#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has throttled requests"
-#   alarm_actions       = [aws_sns_topic.user_updates.arn]
-#   ok_actions          = [aws_sns_topic.user_updates.arn]
-#   dimensions = {
-#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "dynamodb_throttled_requests" {
+  for_each            = var.dynamodb_tables
+  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-throttled-requests"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ThrottledRequests"
+  namespace           = "AWS/DynamoDB"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} has throttled requests"
+  alarm_actions       = [aws_sns_topic.user_updates.arn]
+  ok_actions          = [aws_sns_topic.user_updates.arn]
+  dimensions = {
+    TableName = "${var.application_name}-${each.value["name-suffix"]}"
+  }
+}
 
-# resource "aws_cloudwatch_metric_alarm" "dynamodb_consumed_read_capacity" {
-#   for_each            = var.dynamodb_tables
-#   alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-consumed-read-capacity"
-#   comparison_operator = "GreaterThanThreshold"
-#   evaluation_periods  = 1
-#   metric_name         = "ConsumedReadCapacityUnits"
-#   namespace           = "AWS/DynamoDB"
-#   period              = 300
-#   statistic           = "Sum"
-#   threshold           = 10000
-#   alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} consumed read capacity units exceed 10000 in 5 minutes"
-#   alarm_actions       = [aws_sns_topic.user_updates.arn]
-#   ok_actions          = [aws_sns_topic.user_updates.arn]
-#   dimensions = {
-#     TableName = "${var.application_name}-${each.value["name-suffix"]}"
-#   }
-# }
+resource "aws_cloudwatch_metric_alarm" "dynamodb_consumed_read_capacity" {
+  for_each            = var.dynamodb_tables
+  alarm_name          = "${var.application_name}-${each.value["name-suffix"]}-dynamodb-consumed-read-capacity"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ConsumedReadCapacityUnits"
+  namespace           = "AWS/DynamoDB"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 10000
+  alarm_description   = "Alarm when ${var.application_name}-${each.value["name-suffix"]} consumed read capacity units exceed 10000 in 5 minutes"
+  alarm_actions       = [aws_sns_topic.user_updates.arn]
+  ok_actions          = [aws_sns_topic.user_updates.arn]
+  dimensions = {
+    TableName = "${var.application_name}-${each.value["name-suffix"]}"
+  }
+}
 
 ### CloudFront alarms
 resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
   alarm_name          = "clops-cloudfront-5xx-error-rate"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "5xxErrorRate"
   namespace           = "AWS/CloudFront"
   period              = 300
@@ -232,6 +241,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_4xx_error_rate" {
   alarm_name          = "clops-cloudfront-4xx-error-rate"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "4xxErrorRate"
   namespace           = "AWS/CloudFront"
   period              = 300
@@ -250,6 +260,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_origin_latency" {
   alarm_name          = "clops-cloudfront-origin-latency"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "OriginLatency"
   namespace           = "AWS/CloudFront"
   period              = 300
@@ -268,6 +279,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
   alarm_name          = "clops-cloudfront-total-error-rate"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "TotalErrorRate"
   namespace           = "AWS/CloudFront"
   period              = 300
@@ -284,37 +296,39 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
 
 ### S3 frontend alarms
 resource "aws_cloudwatch_metric_alarm" "s3_4xx_errors" {
-  alarm_name          = "clops-s3-frontend-4xx-errors"
-  comparison_operator = "GreaterThanThreshold"
+  alarm_name          = "clops-s3-cloudfront-4xx-errors"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "4xxErrors"
   namespace           = "AWS/S3"
   period              = 300
-  statistic           = "Average"
+  statistic           = "Sum"
   threshold           = 1
-  alarm_description   = "Alarm when the S3 frontend 4xx error rate exceeds 1 percent"
+  alarm_description   = "Alarm when the S3 website bucket records one or more 4xx errors"
   alarm_actions       = [aws_sns_topic.user_updates.arn]
   ok_actions          = [aws_sns_topic.user_updates.arn]
   dimensions = {
-    BucketName = aws_s3_bucket.main["frontend"].bucket
+    BucketName = aws_s3_bucket.main["cloudfront"].bucket
     FilterId   = "EntireBucket"
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "s3_5xx_errors" {
-  alarm_name          = "clops-s3-frontend-5xx-errors"
+  alarm_name          = "clops-s3-cloudfront-5xx-errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "5xxErrors"
   namespace           = "AWS/S3"
   period              = 300
-  statistic           = "Average"
+  statistic           = "Sum"
   threshold           = 1
-  alarm_description   = "Alarm when the S3 frontend returns at least one 5xx error"
+  alarm_description   = "Alarm when the S3 website bucket records one or more 5xx errors"
   alarm_actions       = [aws_sns_topic.user_updates.arn]
   ok_actions          = [aws_sns_topic.user_updates.arn]
   dimensions = {
-    BucketName = aws_s3_bucket.main["frontend"].bucket
+    BucketName = aws_s3_bucket.main["cloudfront"].bucket
     FilterId   = "EntireBucket"
   }
 }
@@ -324,6 +338,7 @@ resource "aws_cloudwatch_metric_alarm" "sns_notifications_failed" {
   alarm_name          = "clops-sns-notifications-failed"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "NumberOfNotificationsFailed"
   namespace           = "AWS/SNS"
   period              = 300
@@ -341,6 +356,7 @@ resource "aws_cloudwatch_metric_alarm" "sns_notifications_filtered" {
   alarm_name          = "clops-sns-notifications-filtered"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "NumberOfNotificationsFilteredOut-API"
   namespace           = "AWS/SNS"
   period              = 300
@@ -359,6 +375,7 @@ resource "aws_cloudwatch_metric_alarm" "acm_certificate_days_to_expiry" {
   alarm_name          = "clops-acm-certificate-days-to-expiry"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
   metric_name         = "DaysToExpiry"
   namespace           = "AWS/CertificateManager"
   period              = 86400

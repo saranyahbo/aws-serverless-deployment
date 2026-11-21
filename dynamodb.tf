@@ -12,5 +12,5 @@ resource "aws_dynamodb_table" "dynamodb-table" {
       type = attribute.value.type
     }
   }
-  
+
 }

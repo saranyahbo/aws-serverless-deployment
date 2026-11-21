@@ -107,3 +107,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ssl_support_method  = "sni-only"
   }
 }
+
+resource "aws_cloudfront_monitoring_subscription" "default" {
+  distribution_id = aws_cloudfront_distribution.s3_distribution.id
+
+  monitoring_subscription {
+    realtime_metrics_subscription_config {
+      realtime_metrics_subscription_status = "Enabled"
+    }
+  }
+}
