@@ -58,7 +58,6 @@ variable "dynamodb_tables" {
       type = string
     }))
   }))
-  description = "Map of DynamoDB tables with their name suffixes"
 }
 
 
