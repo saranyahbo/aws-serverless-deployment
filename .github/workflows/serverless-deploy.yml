@@ -45,6 +45,5 @@ jobs:
             terraform init -input=false
             terraform validate
             terraform plan -input=false -var-file=env-config/us-east-1/var.tfvars
-            # terraform plan
-            #terraform plan -input=false -var-file=env-config/us-east-1/var.tfvars
+            #terraform apply -input=false -var-file=env-config/us-east-1/var.tfvars -auto-approve
             #terraform apply -auto-approve
