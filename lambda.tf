@@ -22,7 +22,12 @@ resource "aws_lambda_function" "lambda_function" {
     variables = merge(each.value.environment, each.key == "backend_function" ? {
       PRODUCTS_TABLE = aws_dynamodb_table.dynamodb-table["products"].name
       ORDERS_TABLE   = aws_dynamodb_table.dynamodb-table["orders"].name
-      } : {})
+      } : {}, each.key == "okta_auth" ? {
+      OKTA_ISSUER        = var.okta_issuer
+      OKTA_AUDIENCE      = var.okta_audience
+      OKTA_CLIENT_ID     = var.okta_client_id
+      OKTA_CLIENT_SECRET = var.okta_client_secret
+    } : {})
   }
 
   depends_on = [aws_iam_role_policy.lambda_policy, aws_iam_role_policy.backend_dynamodb]

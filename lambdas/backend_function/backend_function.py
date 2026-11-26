@@ -24,7 +24,7 @@ def _response(status, body):
     return {"statusCode": status, "headers": {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Headers": "Content-Type,Authorization",
                 "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
             },
             "body": json.dumps(body, default=_json_default, allow_nan=False)}
@@ -36,7 +36,9 @@ def _invalid_number(value):
 
 def lambda_handler(event, context):
     method = event.get("httpMethod", "").upper()
-    parts = event.get("path", "").strip("/").split("/")
+    proxy_path = (event.get("pathParameters") or {}).get("proxy")
+    request_path = proxy_path if proxy_path is not None else event.get("path", "")
+    parts = request_path.strip("/").split("/")
     if parts and parts[0] == "clops":
         parts = parts[1:]
     tables = {"products": ("PRODUCTS_TABLE", "productId"),
@@ -46,8 +48,6 @@ def lambda_handler(event, context):
     if method not in {"GET", "POST"}:
         return _response(405, {"message": "Supported methods: GET, POST"})
     collection = parts[0]
-    if (collection == "products" and method != "GET") or (collection == "orders" and method != "POST"):
-        return _response(405, {"message": "Products are read-only and orders can only be submitted"})
     table_env, key = tables[collection]
     table = boto3.resource("dynamodb").Table(os.environ[table_env])
     try:

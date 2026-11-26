@@ -15,6 +15,37 @@ variable "lambda_functions" {
   }))
 }
 
+variable "okta_issuer" {
+  type        = string
+  default     = ""
+  description = "Okta custom authorization server issuer"
+}
+
+variable "okta_audience" {
+  type        = string
+  default     = "api://default"
+  description = "Expected access token audience"
+}
+
+variable "okta_client_id" {
+  type        = string
+  default     = ""
+  description = "Confidential client registered for Okta token introspection"
+}
+
+variable "okta_client_secret" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "Okta introspection client secret"
+}
+
+variable "okta_spa_client_id" {
+  type        = string
+  default     = ""
+  description = "Public Okta OIDC client ID for the ShopHub browser app"
+}
+
 variable "preferred_azs" {
   type        = list(string)
   description = "List of preferred availability zones"

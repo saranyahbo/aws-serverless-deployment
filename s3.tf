@@ -19,7 +19,9 @@ locals {
   }
 
   frontend_runtime_config = templatefile("${path.module}/static-contents/config.js.tftpl", {
-    api_base_url = "${aws_api_gateway_stage.main.invoke_url}/clops"
+    api_base_url       = "${aws_api_gateway_stage.main.invoke_url}/clops"
+    okta_issuer        = var.okta_issuer
+    okta_spa_client_id = var.okta_spa_client_id
   })
 }
 

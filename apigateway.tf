@@ -23,6 +23,7 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_method_response.backend_options,
       aws_api_gateway_gateway_response.default_4xx_cors,
       aws_api_gateway_gateway_response.default_5xx_cors,
+      aws_api_gateway_authorizer.main,
     ]))
   }
 
@@ -157,7 +158,7 @@ resource "aws_api_gateway_integration_response" "backend_options" {
   status_code = aws_api_gateway_method_response.backend_options.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -170,7 +171,7 @@ resource "aws_api_gateway_gateway_response" "default_4xx_cors" {
   response_type = "DEFAULT_4XX"
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -181,7 +182,7 @@ resource "aws_api_gateway_gateway_response" "default_5xx_cors" {
   response_type = "DEFAULT_5XX"
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -193,4 +194,24 @@ resource "aws_lambda_permission" "backend_api" {
   function_name = aws_lambda_function.lambda_function["backend_function"].function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*/clops/*"
+}
+
+# Okta token validation for API requests
+resource "aws_lambda_permission" "lambda_permission" {
+  statement_id  = "AllowclopsAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_function["okta_auth"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*"
+}
+
+resource "aws_api_gateway_authorizer" "main" {
+  name                             = "okta_authorizer"
+  rest_api_id                      = aws_api_gateway_rest_api.main.id
+  authorizer_uri                   = aws_lambda_function.lambda_function["okta_auth"].invoke_arn
+  authorizer_credentials           = aws_iam_role.apigw_auth_role.arn
+  type                             = "TOKEN"
+  identity_source                  = "method.request.header.Authorization"
+  authorizer_result_ttl_in_seconds = 0
+  depends_on                       = [aws_iam_role_policy.apigw_auth_policy]
 }

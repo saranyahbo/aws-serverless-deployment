@@ -28,6 +28,24 @@ resource "aws_api_gateway_account" "main" {
   depends_on = [aws_iam_role_policy_attachment.apigw_cloudwatch_logs]
 }
 
+# IAM role API Gateway assumes to invoke the Okta authorizer
+resource "aws_iam_role" "apigw_auth_role" {
+  name = "${var.application_name}-apigw-authorizer-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{ Effect = "Allow", Principal = { Service = "apigateway.amazonaws.com" }, Action = "sts:AssumeRole" }]
+  })
+}
+
+resource "aws_iam_role_policy" "apigw_auth_policy" {
+  name = "${var.application_name}-apigw-authorizer-policy"
+  role = aws_iam_role.apigw_auth_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{ Effect = "Allow", Action = ["lambda:InvokeFunction"], Resource = aws_lambda_function.lambda_function["okta_auth"].arn }]
+  })
+}
+
 #--------------------------------------------------------
 #Lambda
 #--------------------------------------------------------
