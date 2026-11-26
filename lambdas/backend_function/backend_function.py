@@ -24,7 +24,7 @@ def _response(status, body):
     return {"statusCode": status, "headers": {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type,Authorization",
+                "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
             },
             "body": json.dumps(body, default=_json_default, allow_nan=False)}
@@ -46,6 +46,8 @@ def lambda_handler(event, context):
     if method not in {"GET", "POST"}:
         return _response(405, {"message": "Supported methods: GET, POST"})
     collection = parts[0]
+    if (collection == "products" and method != "GET") or (collection == "orders" and method != "POST"):
+        return _response(405, {"message": "Products are read-only and orders can only be submitted"})
     table_env, key = tables[collection]
     table = boto3.resource("dynamodb").Table(os.environ[table_env])
     try:
