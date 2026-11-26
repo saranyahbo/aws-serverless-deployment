@@ -40,6 +40,7 @@ jobs:
         TF_VAR_okta_audience: ${{ secrets.OKTA_AUDIENCE || 'api://default' }}
         TF_VAR_okta_client_id: ${{ secrets.OKTA_CLIENT_ID }}
         TF_VAR_okta_client_secret: ${{ secrets.OKTA_CLIENT_SECRET }}
+        TF_VAR_okta_spa_client_id: ${{ secrets.OKTA_SPA_CLIENT_ID }}
       run: |
             mkdir -p .build
             terraform init -input=false

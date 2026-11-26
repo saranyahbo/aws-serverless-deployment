@@ -21,7 +21,12 @@ def _json_default(value):
 
 
 def _response(status, body):
-    return {"statusCode": status, "headers": {"Content-Type": "application/json"},
+    return {"statusCode": status, "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,Authorization",
+                "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+            },
             "body": json.dumps(body, default=_json_default, allow_nan=False)}
 
 

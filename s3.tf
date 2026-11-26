@@ -5,6 +5,11 @@ resource "aws_s3_bucket" "main" {
 }
 
 locals {
+  static_site_files = toset([
+    for file in fileset("${path.module}/static-contents", "**") : file
+    if !endswith(file, ".tftpl")
+  ])
+
   static_content_types = {
     css  = "text/css; charset=utf-8"
     html = "text/html; charset=utf-8"
@@ -12,10 +17,16 @@ locals {
     json = "application/json"
     svg  = "image/svg+xml"
   }
+
+  frontend_runtime_config = templatefile("${path.module}/static-contents/config.js.tftpl", {
+    api_base_url      = "${aws_api_gateway_stage.main.invoke_url}/clops"
+    okta_issuer       = var.okta_issuer
+    okta_spa_client_id = var.okta_spa_client_id
+  })
 }
 
 resource "aws_s3_object" "static_site" {
-  for_each = fileset("${path.module}/static-contents", "**")
+  for_each = local.static_site_files
 
   bucket = aws_s3_bucket.main["cloudfront"].id
   key    = each.value
@@ -27,6 +38,16 @@ resource "aws_s3_object" "static_site" {
     lower(element(reverse(split(".", each.value)), 0)),
     "application/octet-stream"
   )
+  cache_control = "no-cache"
+}
+
+resource "aws_s3_object" "frontend_runtime_config" {
+  bucket        = aws_s3_bucket.main["cloudfront"].id
+  key           = "config.js"
+  content       = local.frontend_runtime_config
+  content_type  = "application/javascript; charset=utf-8"
+  cache_control = "no-cache"
+  etag          = md5(local.frontend_runtime_config)
 }
 
 resource "aws_s3_bucket_metric" "cloudfront_origin" {

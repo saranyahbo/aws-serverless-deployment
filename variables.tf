@@ -40,6 +40,12 @@ variable "okta_client_secret" {
   description = "Okta introspection client secret, supplied via TF_VAR_okta_client_secret"
 }
 
+variable "okta_spa_client_id" {
+  type        = string
+  default     = ""
+  description = "Public Okta OIDC client ID for the ShopHub browser app using Authorization Code with PKCE"
+}
+
 variable "preferred_azs" {
   type        = list(string)
   description = "List of preferred availability zones"

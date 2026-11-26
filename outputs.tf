@@ -26,3 +26,8 @@ output "cloudfront_domain_name" {
   value       = aws_cloudfront_distribution.s3_distribution.domain_name
 }
 
+output "api_base_url" {
+  description = "Base URL for the ShopHub products and orders API resources."
+  value       = "${aws_api_gateway_stage.main.invoke_url}/clops"
+}
+
