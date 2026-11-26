@@ -1,0 +1,28 @@
+From idea to a live cloud-hosted e-commerce experience.
+
+I built and deployed ShopHub, a responsive static shopping application hosted at auto8mate.com.
+
+What I worked on:
+
+• Built the storefront UI with product browsing, search, categories, favorites, and a shopping bag
+• Provisioned infrastructure with Terraform
+• Hosted static content in Amazon S3 behind Amazon CloudFront
+• Configured ACM SSL certificates and custom-domain DNS through Cloudflare
+• Added API Gateway and AWS Lambda for backend operations
+• Set up DynamoDB tables for products and orders
+• Added product catalog seeding through Terraform
+• Created a GitHub Actions workflow for automated infrastructure deployment
+• Configured CloudWatch logging and SNS notification resources
+
+This project gave me practical experience across frontend development, AWS serverless services, Terraform, DNS, SSL, and CI/CD.
+
+Building it also involved working through real deployment challenges, including ACM validation, CloudFront DNS configuration, Cloudflare proxy settings, and connecting the frontend to DynamoDB-backed APIs.
+
+GitHub repository:
+https://github.com/saranyahbo/aws-serverless-deployment
+
+Excited to keep improving ShopHub and take the product and order workflow further.
+
+#AWS #Terraform #CloudFront #AmazonS3 #DynamoDB #Lambda #APIGateway #GitHubActions #Serverless #CloudEngineering #DevOps
+
+Suggested screenshot caption: ShopHub live at auto8mate.com, deployed on AWS.
