@@ -47,15 +47,15 @@ dynamodb_tables = {
 ###-----------s3 buckets-----------###
 s3_buckets = {
   "frontend" = {
-    s3_bucket_name = "clops-s3-frontend"
+    s3_bucket_name = "clops-s3-frontend-bucket"
   }
   "assets" = {
-    s3_bucket_name = "clops-s3-assets"
+    s3_bucket_name = "clops-s3-assets-bucket"
   }
   "access-logs" = {
-    s3_bucket_name = "clops-s3-access-logs"
+    s3_bucket_name = "clops-s3-access-logs-bucket"
   }
   "cloudfront" = {
-    s3_bucket_name = "clops-s3-cloudfront"
+    s3_bucket_name = "clops-s3-cloudfront-bucket"
   }
 }
